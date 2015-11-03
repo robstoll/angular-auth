@@ -4,9 +4,15 @@
 
 This module contains the following features:
 
-- AuthService to perform log in, check authentication/authorisation
-- [ui.router](https://github.com/angular-ui/ui-router) "interceptor" to verify if the current user is authorised to visit the particular route
-- HttpInterceptor to react to HTTP `401 Unauthorized` and `403 Forbidden`
+- [AuthService](#authservice) to perform log in, check authentication/authorisation
+- [ui.router Interceptor](#routing-interceptor) to verify if the current user is authorised to visit the particular route
+- [Http Interceptor](#http-interceptor) to react to HTTP `401 Unauthorized` and `403 Forbidden`
+
+
+##Installation
+
+The code is quite small, so it is probably good enough to just copy the content of [src/auth.js](https://github.com/robstoll/angular-auth/blob/master/src/auth.js) manually. Alternatively, you can install it with bower 
+`bower install tutteli-angular-auth --save`
 
 Following an example how to include it 
 
@@ -23,7 +29,7 @@ angular.module('appFullAuth', ['tutteli.auth.full']);
 
 ##AuthService
 
-The AuthService works based on broadcasts, inspired by [Gert Hengeveld's description](https://medium.com/opinionated-angularjs/techniques-for-authentication-in-angularjs-applications-7bbf0346acec) and the following events are supported:
+The `AuthService` works based on broadcasts, inspired by [Gert Hengeveld's description](https://medium.com/opinionated-angularjs/techniques-for-authentication-in-angularjs-applications-7bbf0346acec) and the following events are supported:
 
 ```javascript
 .constant('tutteli.auth.EVENTS', {
@@ -82,7 +88,7 @@ angular.module('app',[])
 ```
 
 
-##Routing interceptor
+##Routing Interceptor
 
 The routing interceptor requires [ui.router](https://github.com/angular-ui/ui-router) to work and an additional data entry `authRoles` per route. Omitting the additional data entry corresponds to an empty list which indicates anonymous access. The AuthService does currently not support role hierarchies and hence one needs to indicate all roles, unless only authentication is required but not a special role. In this case `USER_ROLES.authenticated` can be used, `'is-authenticated'` respectively.
 
@@ -114,7 +120,7 @@ Following an example:
 
 
 
-##Http interceptor
+##Http Interceptor
 
 The http interceptor broadcasts events in case a 401 or 403 response returns from the server unless the 401 response follows a login attempt. The constant `'tutteli.auth.EVENTS'` can be used to listen to the events. `notAuthorised` is broadcasted in case of 403 and `notAuthenticated` in case of a 401. See [the example](#listening-example) above in the [AuthService](#authservice) section.
 

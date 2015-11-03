@@ -1,5 +1,5 @@
 {
-  "name": "angular-auth",
+  "name": "tutteli-angular-auth",
   "homepage": "https://github.com/robstoll/angular-auth",
   "authors": [
     "Robert Stoll <rstoll@tutteli.ch>"
@@ -20,7 +20,11 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components"
+    "bower_components",
+    "package.json",
+    "test",
+    "devconfig",
+    "example"
   ],
   "main": [],
   "dependencies": {
