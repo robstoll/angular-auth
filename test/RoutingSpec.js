@@ -20,12 +20,24 @@ describe('RoutingInterceptor', function(){
         }]);
     });
     
-    it('hasRegistered for $stateChangeStart', function(){
+    it('has registered for $stateChangeStart', function(){
         spyOn(AuthService, 'isAuthorised');
         $rootScope.$broadcast('$stateChangeStart', {data:{authRoles:'admin'}});
         expect(AuthService.isAuthorised).toHaveBeenCalledWith('admin');        
     });
      
+    it('state has no data property - passes undefined to AuthService', function(){
+        spyOn(AuthService, 'isAuthorised');
+        $rootScope.$broadcast('$stateChangeStart', {});
+        expect(AuthService.isAuthorised).toHaveBeenCalledWith(undefined);
+    });
+    
+    it('state\'s data has no authRoles property - passes undefined to AuthService', function(){
+        spyOn(AuthService, 'isAuthorised');
+        $rootScope.$broadcast('$stateChangeStart', {data:{}});
+        expect(AuthService.isAuthorised).toHaveBeenCalledWith(undefined);
+    });
+    
     it('is authorised - defaultPrevented = false', function(){
         spyOn(AuthService, 'isAuthorised').and.returnValue(true);
         var result = $rootScope.$broadcast('$stateChangeStart', {data:{authRoles:'admin'}});

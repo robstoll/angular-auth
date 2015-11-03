@@ -86,7 +86,8 @@ angular.module('tutteli.auth.routing', ['ui.router', 'tutteli.auth'])
   function($rootScope, AuthService, AUTH_EVENTS) {
   
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
-        if (!AuthService.isAuthorised(toState.data.authRoles)) {
+        var roles = toState.data !== undefined ? toState.data.authRoles : undefined; 
+        if (!AuthService.isAuthorised(roles)) {
             event.preventDefault();
             if (AuthService.isAuthenticated()) {
                 $rootScope.$broadcast(AUTH_EVENTS.notAuthorised, toState.url);
