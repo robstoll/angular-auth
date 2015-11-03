@@ -1,0 +1,32 @@
+{
+  "name": "angular-auth",
+  "homepage": "https://github.com/robstoll/angular-auth",
+  "authors": [
+    "Robert Stoll <rstoll@tutteli.ch>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/robstoll/angular-auth"
+  },
+  "description": "AuthService + http interceptor + ui.router interceptor",
+  "moduleType": "globals",
+  "keywords": [
+    "angular",
+    "auth",
+    "authentication",
+    "authorisation"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "main": [],
+  "dependencies": {
+    "angular": "~1.4.7"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.4.7"
+  }
+}
