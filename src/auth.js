@@ -91,4 +91,23 @@ angular.module('tutteli.auth', [])
     admin: 'ROLE_ADMIN'
 });
 
+angular.module('tutteli.auth.routing', ['ui.router', 'tutteli.auth'])
+.run(
+  ['$rootScope', 'tutteli.auth.AuthService', 'tutteli.auth.EVENTS',
+  function($rootScope, AuthService, AUTH_EVENTS) {
+  
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+        if (!AuthService.isAuthorised(toState.data.authRoles)) {
+            event.preventDefault();
+            if (AuthService.isAuthenticated()) {
+                $rootScope.$broadcast(AUTH_EVENTS.notAuthorised, toState.url);
+            } else {
+                $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+            }
+        }
+    });
+    
+  }
+]);
+
 })();

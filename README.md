@@ -3,12 +3,15 @@
 This module contains the following features:
 
 - AuthService to perform log in, check authentication/authorisation
+- [ui.router](https://github.com/angular-ui/ui-router) "interceptor" to verify if the current user is authorised to visit the particular route
 
 Following an example how to include it 
 
 ```javascript
-//use the AuthService
+//use only the AuthService
 angular.module('app', ['tutteli.auth']); 
+//use routing interception + AuthService
+angular.module('appWithUiRouting', ['tutteli.auth.routing']); 
 ```
 
 ##AuthService
@@ -65,6 +68,38 @@ Whether the login was successful or not will be indicated with an event broadcas
     AuthServiceProvider.setLoginUrl('/login');
 }]);
 ```
+
+
+##Routing interceptor
+
+The routing interceptor requires [ui.router](https://github.com/angular-ui/ui-router) to work and an additional data entry `authRoles` per route. Omitting the additional data entry corresponds to an empty list which indicates anonymous access. The AuthService does currently not support role hierarchies and hence one needs to indicate all roles, unless only authentication is required but not a special role. In this case `USER_ROLES.authenticated` can be used, `'is-authenticated'` respectively.
+
+Following an example:
+
+```javascript
+.config(
+  ['$locationProvider','$stateProvider', 'tutteli.auth.USER_ROLES',
+  function($locationProvider, $stateProvider, USER_ROLES) {
+      
+    $locationProvider.html5Mode(true);
+    $stateProvider.state('login', {
+        url: '/login',
+        controller: 'tutteli.LoginCtrl',
+        templateUrl: 'login.tpl',
+        data : {
+            authRoles : [] //anonymous access
+        }
+    }).state('home', {
+        url: '/',
+        templateUrl: 'dashboard.html',
+        data : {
+            authRoles : [USER_ROLES.authenticated]
+        }
+    });
+  }
+]);
+```
+
 
 <br/>
 
