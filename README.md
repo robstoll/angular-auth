@@ -4,6 +4,7 @@ This module contains the following features:
 
 - AuthService to perform log in, check authentication/authorisation
 - [ui.router](https://github.com/angular-ui/ui-router) "interceptor" to verify if the current user is authorised to visit the particular route
+- HttpInterceptor to react to HTTP `401 Unauthorized` and `403 Forbidden`
 
 Following an example how to include it 
 
@@ -12,6 +13,10 @@ Following an example how to include it
 angular.module('app', ['tutteli.auth']); 
 //use routing interception + AuthService
 angular.module('appWithUiRouting', ['tutteli.auth.routing']); 
+//use http interception + AuthService
+angular.module('appInterceptHttp', ['tutteli.auth.http']); 
+//use AuthService + routing interception + http interception
+angular.module('appFullAuth', ['tutteli.auth.full']); 
 ```
 
 ##AuthService
@@ -28,11 +33,11 @@ The AuthService works based on broadcasts, inspired by [Gert Hengeveld's descrip
 })
 ```
 
-For convenience and maximum forward compatibility we recommend to use the constant instead of listening on the hard-coded string. As an example:
+<a name="listening-example"></a>For convenience and maximum forward compatibility we recommend to use the constant `'tutteli.auth.EVENTS'` to register for an event instead of using a hard-coded string. As an example:
 
 ```javascript
 .controller('tutteli.LoginCtrl', 
-  ['$rootScope', 'tutteli.auth.Events', 
+  ['$rootScope', 'tutteli.auth.EVENTS', 
   function($rootScope, AUTH_EVENTS){
     $rootScope.$on(AUTH_EVENTS.notAuthorised, function(event, url) {
         alert('You are not authorised to visit ' + url);
@@ -58,15 +63,20 @@ Following an example how the AuthService can be used to perform a log in:
 ]);
 ```
 
-Whether the login was successful or not will be indicated with an event broadcasted on the `$rootScope`. Optionally you can perform an action directly in the controller by using the [Promise](https://docs.angularjs.org/api/ng/service/$q#the-promise-api) returned by the `login` method of the `AuthService`. Notice, that the `AuthService` merely forwards the object passed to the `login` method via http POST to the specified `LoginUrl` which can be modified as follows:
+Whether the login was successful or not will be indicated with an event broadcasted on the `$rootScope`. Optionally you can perform an action directly in the controller by using the [Promise](https://docs.angularjs.org/api/ng/service/$q#the-promise-api) returned by the `login` method of the `AuthService`. Notice, that the `AuthService` merely forwards the object passed to the `login` method via http POST to the specified value `'tutteli.auth.loginUrl'` which can simply be redefined if desired:
 
 ```javascript
-.config(['tutteli.auth.AuthServiceProvider', function(AuthServiceProvider){
-    //default value is href of the <base> tag + 'login'
-    //e.g., <base href="/app/"/> results in login url: /app/login
-    //this default value can be changed as follows:
-    AuthServiceProvider.setLoginUrl('/login');
-}]);
+//default value is based on the href attribute of the <base> tag + 'login'
+//e.g., <base href="/app/"/> results in login url: /app/login
+//this default value can be changed as follows:
+
+angular.module('app',[])
+//static url
+.value('tutteli.auth.loginUrl', 'own/login/url')
+//dynamic url
+.factory('tutteli.authLoginUrl', function(){
+    return calculateLoginUrl();
+});
 ```
 
 
@@ -100,6 +110,11 @@ Following an example:
 ]);
 ```
 
+
+
+##Http interceptor
+
+The http interceptor broadcasts events in case a 401 or 403 response returns from the server unless the 401 response follows a login attempt. The constant `'tutteli.auth.EVENTS'` can be used to listen to the events. `notAuthorised` is broadcasted in case of 403 and `notAuthenticated` in case of a 401. See [the example](#listening-example) above in the [AuthService](#authservice) section.
 
 <br/>
 

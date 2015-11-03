@@ -4,51 +4,15 @@
  * root folder or visit https://github.com/robstoll/angular-auth
  */
 'use strict';
-
-describe('AuthServiceProvider', function(){
-    
-    it('LoginUrl is href from <base> and appends login', function(){
-        angular.element(document.querySelector('head')).append('<base href="/test/"/>');      
-        module('tutteli.auth', ['tutteli.auth.AuthServiceProvider', function(provider){
-            expect(provider.getLoginUrl()).toBe('/test/login');  
-        }]);
-        
-        inject(function(){});
-    });
-    
-    it('LoginUrl can be modified', function(){
-        angular.element(document.querySelector('head')).append('<base href="/test/"/>');      
-        module('tutteli.auth', ['tutteli.auth.AuthServiceProvider', function(provider){
-            expect(provider.getLoginUrl()).not.toBe('test.html');
-            provider.setLoginUrl('test.html');
-            expect(provider.getLoginUrl()).toBe('test.html');
-        }]);
-        
-        inject(function(){});
-    });
-    
-    it('LoginUrl is used by login method', function(){
-        module('tutteli.auth', ['tutteli.auth.AuthServiceProvider', function(provider){
-            provider.setLoginUrl('login.html');
-        }]);
-        inject(['$httpBackend', 'tutteli.auth.AuthService', function($httpBackend, AuthService){
-            $httpBackend.whenPOST('login.html').respond(404);
-            $httpBackend.expectPOST('login.html');
-            AuthService.login();
-            $httpBackend.flush();
-            $httpBackend.verifyNoOutstandingExpectation();
-            $httpBackend.verifyNoOutstandingRequest();
-        }]);
-    });
-});
-
     
 describe('AuthService', function(){
     var AuthService = null;
     var loginUrl = '/login';
-    beforeEach(module('tutteli.auth', ['tutteli.auth.AuthServiceProvider', function(provider){
-        provider.setLoginUrl(loginUrl);
-    }]));
+    
+    beforeEach(module('tutteli.auth', function($provide){
+        $provide.value('tutteli.auth.loginUrl', loginUrl);
+    }));
+    
     beforeEach(inject(['tutteli.auth.AuthService', function(_AuthService_){
         AuthService = _AuthService_;
     }]));
