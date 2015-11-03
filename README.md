@@ -1,5 +1,7 @@
 # tutteli.auth for AngularJS
 
+[![Build Status](https://travis-ci.org/robstoll/angular-auth.svg?branch=master)](https://travis-ci.org/robstoll/angular-auth)
+
 This module contains the following features:
 
 - AuthService to perform log in, check authentication/authorisation
