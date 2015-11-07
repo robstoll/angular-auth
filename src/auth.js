@@ -30,8 +30,8 @@ function LoginServiceProvider(){
     }
 }
 
-AuthService.$inject = ['$rootScope', 'tutteli.auth.LoginService', 'tutteli.auth.Session', 'tutteli.auth.USER_ROLES', 'tutteli.auth.EVENTS'];
-function AuthService($rootScope, LoginService, Session, USER_ROLES, AUTH_EVENTS) {
+AuthService.$inject = ['$rootScope', '$q', 'tutteli.auth.LoginService', 'tutteli.auth.Session', 'tutteli.auth.USER_ROLES', 'tutteli.auth.EVENTS'];
+function AuthService($rootScope, $q, LoginService, Session, USER_ROLES, AUTH_EVENTS) {
     
    this.login = function (credentials) {
         return LoginService.login(credentials).then(function (result) {
@@ -39,6 +39,7 @@ function AuthService($rootScope, LoginService, Session, USER_ROLES, AUTH_EVENTS)
             $rootScope.$broadcast(AUTH_EVENTS.loginSuccess, result);
         }, function(errorResponse){
             $rootScope.$broadcast(AUTH_EVENTS.loginFailed, errorResponse);
+            return $q.reject(errorResponse);
         });
     };
         

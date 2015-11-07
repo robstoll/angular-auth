@@ -8,7 +8,7 @@
 describe('Session', function(){
     var Session;
     
-    beforeEach(module('tutteli.auth'));
+    beforeEach(module('tutteli.auth.core'));
     
     beforeEach(inject(['tutteli.auth.Session', function(_Session_) {
         Session = _Session_;

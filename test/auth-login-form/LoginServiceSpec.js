@@ -23,7 +23,7 @@ describe('LoginService', function(){
             response = {bla: 'dummy'};
         
         beforeEach(inject(function(_$httpBackend_){
-                $httpBackend = _$httpBackend_;
+            $httpBackend = _$httpBackend_;
         }));
         
         afterEach(function() {

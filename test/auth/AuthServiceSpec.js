@@ -10,7 +10,7 @@ describe('AuthService', function(){
     var loginUrl = '/login';
     var LoginService = null;
     
-    beforeEach(module('tutteli.auth', function($provide){
+    beforeEach(module('tutteli.auth.core', function($provide){
         LoginService = jasmine.createSpyObj('LoginService', ['login']);
         $provide.value('tutteli.auth.LoginService', LoginService);
     }));
@@ -84,17 +84,21 @@ describe('AuthService', function(){
             }));
             
             it('broadcasts AUTH_EVENTS.loginFailure', function(){
-                AuthService.login()['finally'](function(){
-                    expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.loginFailure, response);
-                });
+                AuthService.login();
+                $rootScope.$apply();
+                expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.loginFailed, response);
             });
             
             it('does not create a Session', function(){
                 spyOn(Session, 'create');
-                AuthService.login()['finally'](function(){
-                    expect(Session.user).toEqual(undefined);
-                    expect(Session).not.toHaveBeenCalled();
-                });
+                AuthService.login();
+                $rootScope.$apply();
+                expect(Session.user).toEqual(undefined);
+                expect(Session.create).not.toHaveBeenCalled();
+            });
+            
+            it('returns a promise which rejects', function(){
+                AuthService.login().then(function(){fail('returned a promiss which fulfilled');});
             });
         });
         
@@ -102,19 +106,19 @@ describe('AuthService', function(){
             var user = {role:'admin'};
             var response = {user: user, additionalInfo: 'bla'};
             beforeEach(inject(function($q){
-                LoginService.login.and.callFake(function(){return $q.reject(response);});
+                LoginService.login.and.callFake(function(){return $q.resolve(response);});
             }));
             
             it('broadcasts AUTH_EVENTS.loginSuccess', function(){
-                AuthService.login()['finally'](function(){
-                    expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.loginSuccess, response);
-                });
+                AuthService.login();
+                $rootScope.$apply();
+                expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.loginSuccess, response);
             });
             
             it('creates Session', function(){
-                AuthService.login()['finally'](function(){
-                    expect(Session.user).toEqual(user);
-                });
+                AuthService.login();
+                $rootScope.$apply();
+                expect(Session.user).toEqual(user);
             });
         });
     });

@@ -8,7 +8,7 @@
 describe('LoginServiceProvider', function(){
     var LoginServiceProvider = null;
     
-    beforeEach(module('tutteli.auth', ['tutteli.auth.LoginServiceProvider', function(provider){
+    beforeEach(module('tutteli.auth.core', ['tutteli.auth.LoginServiceProvider', function(provider){
         LoginServiceProvider = provider;
     }]));
         
