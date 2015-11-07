@@ -8,9 +8,11 @@
 describe('AuthService', function(){
     var AuthService = null;
     var loginUrl = '/login';
+    var LoginService = null;
     
     beforeEach(module('tutteli.auth', function($provide){
-        $provide.value('tutteli.auth.loginUrl', loginUrl);
+        LoginService = jasmine.createSpyObj('LoginService', ['login']);
+        $provide.value('tutteli.auth.LoginService', LoginService);
     }));
     
     beforeEach(inject(['tutteli.auth.AuthService', function(_AuthService_){
@@ -61,59 +63,60 @@ describe('AuthService', function(){
     });
     
     describe('login:', function(){
-        var $httpBackend = null,
-            $rootScope = null, 
-            AUTH_EVENTS = null;
+        var $rootScope = null, 
+            AUTH_EVENTS = null, 
+            Session = null;
         
         beforeEach(function(){
-            inject(['$rootScope', '$httpBackend', 'tutteli.auth.EVENTS',
-                   function(_$rootScope_, _$httpBackend_, _AUTH_EVENTS_){
+            inject(['$rootScope', 'tutteli.auth.EVENTS', 'tutteli.auth.Session',
+                   function(_$rootScope_, _AUTH_EVENTS_, _Session_){
                 $rootScope = _$rootScope_;
                 spyOn($rootScope, '$broadcast');
-                $httpBackend = _$httpBackend_;
                 AUTH_EVENTS = _AUTH_EVENTS_;
+                Session = _Session_;
             }]);
         });
-        
-        afterEach(function() {
-            $httpBackend.verifyNoOutstandingExpectation();
-            $httpBackend.verifyNoOutstandingRequest();
-        });
 
-        describe('broadcasts with loginFailed', function(){
-            var response = {bla: 'dummy'};
-            afterEach(function(){
-                $httpBackend.expectPOST(loginUrl);
-                AuthService.login();
-                $httpBackend.flush();
-                expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.loginFailed, response);
+        describe('LoginService rejects -', function(){
+            var response = {};
+            beforeEach(inject(function($q){
+                LoginService.login.and.callFake(function(){return $q.reject(response);});
+            }));
+            
+            it('broadcasts AUTH_EVENTS.loginFailure', function(){
+                AuthService.login()['finally'](function(){
+                    expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.loginFailure, response);
+                });
             });
             
-            it('404', function(){
-                $httpBackend.whenPOST(loginUrl).respond(404, response);
-            });
-            
-            it('403', function(){
-                $httpBackend.whenPOST(loginUrl).respond(403, response);
-            });
-            
-            it('401', function(){
-                $httpBackend.whenPOST(loginUrl).respond(403, response);
+            it('does not create a Session', function(){
+                spyOn(Session, 'create');
+                AuthService.login()['finally'](function(){
+                    expect(Session.user).toEqual(undefined);
+                    expect(Session).not.toHaveBeenCalled();
+                });
             });
         });
         
-        it('is successful - broadcasts with loginSuccess and creates Session', 
-                inject(['tutteli.auth.Session', function(Session){
-            expect(Session.user).toBe(undefined);
+        describe('LoginService fulfills -', function(){
             var user = {role:'admin'};
             var response = {user: user, additionalInfo: 'bla'};
-            $httpBackend.whenPOST(loginUrl).respond(200, response);
-            $httpBackend.expectPOST(loginUrl);
-            AuthService.login();
-            $httpBackend.flush();
-            expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.loginSuccess, response);
-            expect(Session.user).toEqual(user);
-        }]));
+            beforeEach(inject(function($q){
+                LoginService.login.and.callFake(function(){return $q.reject(response);});
+            }));
+            
+            it('broadcasts AUTH_EVENTS.loginSuccess', function(){
+                AuthService.login()['finally'](function(){
+                    expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.loginSuccess, response);
+                });
+            });
+            
+            it('creates Session', function(){
+                AuthService.login()['finally'](function(){
+                    expect(Session.user).toEqual(user);
+                });
+            });
+        });
     });
     
 });

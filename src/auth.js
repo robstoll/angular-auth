@@ -3,19 +3,37 @@
  * For the full copyright and license information, please have a look at LICENSE in the
  * root folder or visit https://github.com/robstoll/angular-auth
  */
-'use strict';
 (function(){
+'use strict';
 
 angular.module('tutteli.auth.full', ['tutteli.auth', 'tutteli.auth.routing', 'tutteli.auth.http']);
 
-AuthService.$inject = ['$rootScope', '$http', 'tutteli.auth.Session', 'tutteli.auth.USER_ROLES', 'tutteli.auth.EVENTS', 'tutteli.auth.loginUrl'];
-function AuthService($rootScope, $http, Session, USER_ROLES, AUTH_EVENTS, loginUrl) {
+function LoginServiceProvider(){
+    var loginServiceName = 'tutteli.auth.login.form.LoginService';
+    
+    this.setLoginServiceName = function(name){
+        loginServiceName = name;
+    };
+    
+    this.getLoginServiceName = function(){
+        return loginServiceName;
+    };
+    
+    this.$get = $get;
+    $get.$inject = ['$injector'];
+    function $get($injector){
+        return $injector.get(loginServiceName);
+    }
+}
+
+AuthService.$inject = ['$rootScope', 'tutteli.auth.LoginService', 'tutteli.auth.Session', 'tutteli.auth.USER_ROLES', 'tutteli.auth.EVENTS'];
+function AuthService($rootScope, LoginService, Session, USER_ROLES, AUTH_EVENTS) {
     
    this.login = function (credentials) {
-        return $http.post(loginUrl, credentials).success(function (result) {
+        return LoginService.login(credentials).then(function (result) {
             Session.create(result.user);
             $rootScope.$broadcast(AUTH_EVENTS.loginSuccess, result);
-        }).error(function(errorResponse){
+        }, function(errorResponse){
             $rootScope.$broadcast(AUTH_EVENTS.loginFailed, errorResponse);
         });
     };
@@ -76,46 +94,6 @@ angular.module('tutteli.auth', [])
     authenticated: 'IS_AUTHENTICATED',
     editor: 'ROLE_EDITOR',
     admin: 'ROLE_ADMIN'
-}).factory('tutteli.auth.loginUrl', function(){
-    return angular.element(document.querySelector('base')).attr('href') + 'login';
-});
-
-angular.module('tutteli.auth.routing', ['ui.router', 'tutteli.auth'])
-.run(
-  ['$rootScope', 'tutteli.auth.AuthService', 'tutteli.auth.EVENTS',
-  function($rootScope, AuthService, AUTH_EVENTS) {
-  
-    $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
-        var roles = toState.data !== undefined ? toState.data.authRoles : undefined; 
-        if (!AuthService.isAuthorised(roles)) {
-            event.preventDefault();
-            if (AuthService.isAuthenticated()) {
-                $rootScope.$broadcast(AUTH_EVENTS.notAuthorised, toState.url);
-            } else {
-                $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
-            }
-        }
-    });
-    
-  }
-]);
-
-HttpInterceptor.$inject = ['$rootScope', '$q', 'tutteli.auth.EVENTS', 'tutteli.auth.loginUrl'];
-function HttpInterceptor($rootScope, $q, AUTH_EVENTS, LoginUrl) {
-    
-    this.responseError = function(response) {
-        if (response.status == 403) {
-            $rootScope.$broadcast(AUTH_EVENTS.notAuthorised, response.data);
-        } else if(response.status == 401 && response.config.url != LoginUrl) {
-            $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated, response.data);
-        }
-        return $q.reject(response);
-    };
-}
-
-angular.module('tutteli.auth.http', ['tutteli.auth'])
-.config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.interceptors.push('tutteli.auth.HttpInterceptor');
-}]).service('tutteli.auth.HttpInterceptor', HttpInterceptor);
+}).provider('tutteli.auth.LoginService', LoginServiceProvider);
 
 })();

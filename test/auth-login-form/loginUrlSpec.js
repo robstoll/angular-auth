@@ -10,22 +10,22 @@ describe('loginUrl', function(){
     
     it('is href from <base> and appends login', function(){
         angular.element(document.querySelector('head')).append('<base href="/test/"/>');      
-        module('tutteli.auth');
+        module('tutteli.auth.login.form');
         
-        inject(['tutteli.auth.loginUrl', function(loginUrl){
+        inject(['tutteli.auth.login.form.loginUrl', function(loginUrl){
             expect(loginUrl).toBe('/test/login');
         }]);
     });
     
-    it('LoginUrl is used by login method', function(){
-        module('tutteli.auth', function($provide){
-            $provide.value('tutteli.auth.loginUrl', 'login.html');
+    it('is used by LoginService\'s login method', function(){
+        module('tutteli.auth.login.form', function($provide){
+            $provide.value('tutteli.auth.login.form.loginUrl', 'login.html');
         });
         
-        inject(['$httpBackend', 'tutteli.auth.AuthService', function($httpBackend, AuthService){
+        inject(['$httpBackend', 'tutteli.auth.login.form.LoginService', function($httpBackend, LoginService){
             $httpBackend.whenPOST('login.html').respond(404);
             $httpBackend.expectPOST('login.html');
-            AuthService.login();
+            LoginService.login();
             $httpBackend.flush();
             $httpBackend.verifyNoOutstandingExpectation();
             $httpBackend.verifyNoOutstandingRequest();

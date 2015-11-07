@@ -11,7 +11,10 @@ describe('RoutingInterceptor', function(){
         AUTH_EVENTS = null;
     beforeEach(function(){
         angular.module('ui.router', []);
-        module('tutteli.auth.routing');
+        module('tutteli.auth.routing', function($provide){
+            var LoginService = jasmine.createSpyObj('LoginService', ['login']);
+            $provide.value('tutteli.auth.LoginService', LoginService);
+        });
         inject(['$rootScope', 'tutteli.auth.AuthService', 'tutteli.auth.EVENTS', 
                 function(_$rootScope_, _AuthService_, _AUTH_EVENTS_){
             $rootScope = _$rootScope_;
