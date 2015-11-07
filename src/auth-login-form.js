@@ -18,7 +18,7 @@
         };
     }
 
-    angular.module('tutteli.auth.login.form', [])
+    angular.module('tutteli.auth.login.form', ['tutteli.auth.core'])
     .service('tutteli.auth.login.form.LoginService', LoginService)
     .factory('tutteli.auth.loginUrl', function(){
         return angular.element(document.querySelector('base')).attr('href') + 'login';
