@@ -6,7 +6,11 @@
 (function(){
 'use strict';
 
-angular.module('tutteli.auth.full', ['tutteli.auth', 'tutteli.auth.routing', 'tutteli.auth.http']);
+angular.module('tutteli.auth', 
+        ['tutteli.auth.core', 
+         'tutteli.auth.login.form', 
+         'tutteli.auth.routing', 
+         'tutteli.auth.http']);
 
 function LoginServiceProvider(){
     var loginServiceName = 'tutteli.auth.login.form.LoginService';
@@ -81,9 +85,10 @@ function Session() {
  * Partly inspired by 
  * https://medium.com/opinionated-angularjs/techniques-for-authentication-in-angularjs-applications-7bbf0346acec#.wsvrwi4v4
  */
-angular.module('tutteli.auth', [])
+angular.module('tutteli.auth.core', [])
 .service('tutteli.auth.AuthService', AuthService)
 .service('tutteli.auth.Session', Session)
+.provider('tutteli.auth.LoginService', LoginServiceProvider)
 .constant('tutteli.auth.EVENTS', {
     loginSuccess: 'tutteli-auth-login-success',
     loginFailed: 'tutteli-auth-login-failed',
@@ -94,6 +99,6 @@ angular.module('tutteli.auth', [])
     authenticated: 'IS_AUTHENTICATED',
     editor: 'ROLE_EDITOR',
     admin: 'ROLE_ADMIN'
-}).provider('tutteli.auth.LoginService', LoginServiceProvider);
+});
 
 })();

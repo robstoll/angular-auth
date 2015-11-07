@@ -6,17 +6,21 @@
 (function(){
 'use strict';
 
-    LoginService.$inject = ['$http', 'tutteli.auth.login.form.loginUrl'];
+    LoginService.$inject = ['$http', 'tutteli.auth.loginUrl'];
     function LoginService($http, loginUrl){
         
         this.login = function(credentials){
             return $http.post(loginUrl, credentials);
         };
+        
+        this.getLoginUrls = function(){
+            return [loginUrl];
+        };
     }
 
-    angular.module('tutteli.auth.login.form', ['tutteli.auth'])
+    angular.module('tutteli.auth.login.form', [])
     .service('tutteli.auth.login.form.LoginService', LoginService)
-    .factory('tutteli.auth.login.form.loginUrl', function(){
+    .factory('tutteli.auth.loginUrl', function(){
         return angular.element(document.querySelector('base')).attr('href') + 'login';
     });
 

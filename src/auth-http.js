@@ -19,7 +19,7 @@ function HttpInterceptor($rootScope, $q, AUTH_EVENTS, LoginUrl) {
     };
 }
 
-angular.module('tutteli.auth.http', ['tutteli.auth'])
+angular.module('tutteli.auth.http', ['tutteli.auth.core'])
 .config(['$httpProvider', function ($httpProvider) {
     $httpProvider.interceptors.push('tutteli.auth.HttpInterceptor');
 }]).service('tutteli.auth.HttpInterceptor', HttpInterceptor);

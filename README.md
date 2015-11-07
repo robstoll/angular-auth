@@ -11,20 +11,24 @@ This module contains the following features:
 
 ##Installation
 
-The code is quite small, so it is probably good enough to just copy the content of [src/auth.js](https://github.com/robstoll/angular-auth/blob/master/src/auth.js) manually. Alternatively, you can install it with bower 
+The code is quite small, so it is probably good enough to just copy the content of [src/auth.js](https://github.com/robstoll/angular-auth/blob/master/src/auth.js) and [src/auth-login-form.js](https://github.com/robstoll/angular-auth/blob/master/src/auth-login-form.js) manually (there are separate files for routing and http). Alternatively, you can install it with bower 
 `bower install tutteli-angular-auth --save`
 
 Following an example how to include it 
 
 ```javascript
-//use only the AuthService
-angular.module('app', ['tutteli.auth']); 
-//use routing interception + AuthService
+//use AuthService + form login + routing interception + http interception
+angular.module('appFullAuth', ['tutteli.auth']); 
+//use only AuthService + form login 
+angular.module('app', ['tutteli.auth.login.form']); 
+//use routing interception + AuthService (login not possible)
 angular.module('appWithUiRouting', ['tutteli.auth.routing']); 
-//use http interception + AuthService
+//use routing interception + AuthService + form login
+angular.module('appWithUiRouting', ['tutteli.auth.routing', 
+                                    'tutteli.auth.login.form']); 
+//use http interception + AuthService (login not possible)
 angular.module('appInterceptHttp', ['tutteli.auth.http']); 
-//use AuthService + routing interception + http interception
-angular.module('appFullAuth', ['tutteli.auth.full']); 
+
 ```
 
 ##AuthService

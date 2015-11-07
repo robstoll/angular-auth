@@ -6,7 +6,7 @@
 (function(){
 'use strict';
 
-angular.module('tutteli.auth.routing', ['ui.router', 'tutteli.auth'])
+angular.module('tutteli.auth.routing', ['ui.router', 'tutteli.auth.core'])
 .run(
   ['$rootScope', 'tutteli.auth.AuthService', 'tutteli.auth.EVENTS',
   function($rootScope, AuthService, AUTH_EVENTS) {

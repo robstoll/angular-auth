@@ -12,14 +12,14 @@ describe('loginUrl', function(){
         angular.element(document.querySelector('head')).append('<base href="/test/"/>');      
         module('tutteli.auth.login.form');
         
-        inject(['tutteli.auth.login.form.loginUrl', function(loginUrl){
+        inject(['tutteli.auth.loginUrl', function(loginUrl){
             expect(loginUrl).toBe('/test/login');
         }]);
     });
     
     it('is used by LoginService\'s login method', function(){
         module('tutteli.auth.login.form', function($provide){
-            $provide.value('tutteli.auth.login.form.loginUrl', 'login.html');
+            $provide.value('tutteli.auth.loginUrl', 'login.html');
         });
         
         inject(['$httpBackend', 'tutteli.auth.login.form.LoginService', function($httpBackend, LoginService){
