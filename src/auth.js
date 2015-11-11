@@ -35,7 +35,10 @@ function AuthService($rootScope, $q, LoginService, Session, USER_ROLES, AUTH_EVE
     
    this.login = function (credentials) {
         return LoginService.login(credentials).then(function (result) {
-            Session.create(result.user);
+            if (result.data.user == undefined) {
+                return $q.reject({msg:'user was not defined in the returned data', data: result.data});
+            }
+            Session.create(result.data.user);
             $rootScope.$broadcast(AUTH_EVENTS.loginSuccess, result);
         }, function(errorResponse){
             $rootScope.$broadcast(AUTH_EVENTS.loginFailed, errorResponse);

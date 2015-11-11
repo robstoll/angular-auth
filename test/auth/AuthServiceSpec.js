@@ -104,7 +104,8 @@ describe('AuthService', function(){
         
         describe('LoginService fulfills -', function(){
             var user = {role:'admin'};
-            var response = {user: user, additionalInfo: 'bla'};
+            var data = {user: user, additionalInfo: 'bla'};
+            var response = {data: data};
             beforeEach(inject(function($q){
                 LoginService.login.and.callFake(function(){return $q.resolve(response);});
             }));
@@ -121,6 +122,14 @@ describe('AuthService', function(){
                 expect(Session.user).toEqual(user);
             });
         });
+        
+        it('LoginService fulfills but returns wrong content - returns rejected promise', inject(function($q){
+            var response = {data: {noUser:''}};
+            LoginService.login.and.callFake(function(){return $q.resolve(response);});
+            var result = AuthService.login();
+            $rootScope.$apply();
+            result.then(function(){fail('returned a promise which fullfilled');});
+        }));
     });
     
 });
