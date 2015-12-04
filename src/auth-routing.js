@@ -7,9 +7,11 @@
 'use strict';
 
 angular.module('tutteli.auth.routing', ['ui.router', 'tutteli.auth.core'])
-.run(
-  ['$rootScope', 'tutteli.auth.AuthService', 'tutteli.auth.EVENTS',
-  function($rootScope, AuthService, AUTH_EVENTS) {
+.run(stateChangeHandler);
+
+
+stateChangeHandler.$inject = ['$rootScope', 'tutteli.auth.AuthService', 'tutteli.auth.EVENTS'];
+function stateChangeHandler($rootScope, AuthService, AUTH_EVENTS) {
   
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
         var roles = toState.data !== undefined ? toState.data.authRoles : undefined; 
@@ -22,8 +24,6 @@ angular.module('tutteli.auth.routing', ['ui.router', 'tutteli.auth.core'])
             }
         }
     });
-    
-  }
-]);
+}
 
 })();

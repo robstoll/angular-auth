@@ -6,22 +6,24 @@
 (function(){
 'use strict';
 
-    LoginService.$inject = ['$http', 'tutteli.auth.loginUrl'];
-    function LoginService($http, loginUrl){
-        
-        this.login = function(credentials){
-            return $http.post(loginUrl, credentials);
-        };
-        
-        this.getLoginUrls = function(){
-            return [loginUrl];
-        };
-    }
+angular.module('tutteli.auth.login.form', ['tutteli.auth.core'])
+.service('tutteli.auth.login.form.LoginService', LoginService)
+.factory('tutteli.auth.loginUrl', LoginUrl);
 
-    angular.module('tutteli.auth.login.form', ['tutteli.auth.core'])
-    .service('tutteli.auth.login.form.LoginService', LoginService)
-    .factory('tutteli.auth.loginUrl', function(){
-        return angular.element(document.querySelector('base')).attr('href') + 'login';
-    });
+LoginService.$inject = ['$http', 'tutteli.auth.loginUrl'];
+function LoginService($http, loginUrl) {
+    
+    this.login = function(credentials) {
+        return $http.post(loginUrl, credentials);
+    };
+    
+    this.getLoginUrls = function() {
+        return [loginUrl];
+    };
+}   
+
+function LoginUrl() {
+    return angular.element(document.querySelector('base')).attr('href') + 'login';
+}
 
 })();

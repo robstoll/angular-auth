@@ -6,6 +6,11 @@
 (function(){
 'use strict';
 
+angular.module('tutteli.auth.http', ['tutteli.auth.core'])
+.config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.interceptors.push('tutteli.auth.HttpInterceptor');
+}]).service('tutteli.auth.HttpInterceptor', HttpInterceptor);
+
 HttpInterceptor.$inject = ['$rootScope', '$q', 'tutteli.auth.EVENTS', 'tutteli.auth.loginUrl'];
 function HttpInterceptor($rootScope, $q, AUTH_EVENTS, LoginUrl) {
     
@@ -18,10 +23,5 @@ function HttpInterceptor($rootScope, $q, AUTH_EVENTS, LoginUrl) {
         return $q.reject(response);
     };
 }
-
-angular.module('tutteli.auth.http', ['tutteli.auth.core'])
-.config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.interceptors.push('tutteli.auth.HttpInterceptor');
-}]).service('tutteli.auth.HttpInterceptor', HttpInterceptor);
 
 })();
