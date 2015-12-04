@@ -7,7 +7,7 @@
 'use strict';
 
 angular.module('tutteli.auth.routing', ['ui.router', 'tutteli.auth.core'])
-.run(stateChangeHandler);
+    .run(stateChangeHandler);
 
 
 stateChangeHandler.$inject = ['$rootScope', 'tutteli.auth.AuthService', 'tutteli.auth.EVENTS'];

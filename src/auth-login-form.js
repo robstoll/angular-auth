@@ -7,8 +7,8 @@
 'use strict';
 
 angular.module('tutteli.auth.login.form', ['tutteli.auth.core'])
-.service('tutteli.auth.login.form.LoginService', LoginService)
-.factory('tutteli.auth.loginUrl', LoginUrl);
+    .service('tutteli.auth.login.form.LoginService', LoginService)
+    .factory('tutteli.auth.loginUrl', LoginUrl);
 
 LoginService.$inject = ['$http', 'tutteli.auth.loginUrl'];
 function LoginService($http, loginUrl) {

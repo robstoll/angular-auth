@@ -6,45 +6,47 @@
 (function(){
 'use strict';
 
-angular.module('tutteli.auth', 
-        ['tutteli.auth.core', 
-         'tutteli.auth.login.form', 
-         'tutteli.auth.routing', 
-         'tutteli.auth.http']);
+angular.module('tutteli.auth', [
+    'tutteli.auth.core', 
+    'tutteli.auth.login.form', 
+    'tutteli.auth.routing', 
+    'tutteli.auth.http',
+]);
+
 /*
  * Partly inspired by 
  * https://medium.com/opinionated-angularjs/techniques-for-authentication-in-angularjs-applications-7bbf0346acec#.wsvrwi4v4
  */
 angular.module('tutteli.auth.core', [])
-.service('tutteli.auth.AuthService', AuthService)
-.service('tutteli.auth.Session', Session)
-.provider('tutteli.auth.LoginService', LoginServiceProvider)
-.constant('tutteli.auth.EVENTS', {
-    loginSuccess: 'tutteli-auth-login-success',
-    loginFailed: 'tutteli-auth-login-failed',
-    logoutSuccess: 'tutteli-auth-logout-success',
-    notAuthenticated: 'tutteli-auth-not-authenticated',
-    notAuthorised: 'tutteli-auth-not-authorised'
-}).constant('tutteli.auth.USER_ROLES', {
-    authenticated: 'IS_AUTHENTICATED',
-    editor: 'ROLE_EDITOR',
-    admin: 'ROLE_ADMIN'
-});
+    .service('tutteli.auth.AuthService', AuthService)
+    .service('tutteli.auth.Session', Session)
+    .provider('tutteli.auth.LoginService', LoginServiceProvider)
+    .constant('tutteli.auth.EVENTS', {
+        loginSuccess: 'tutteli-auth-login-success',
+        loginFailed: 'tutteli-auth-login-failed',
+        logoutSuccess: 'tutteli-auth-logout-success',
+        notAuthenticated: 'tutteli-auth-not-authenticated',
+        notAuthorised: 'tutteli-auth-not-authorised'
+    }).constant('tutteli.auth.USER_ROLES', {
+        authenticated: 'IS_AUTHENTICATED',
+        editor: 'ROLE_EDITOR',
+        admin: 'ROLE_ADMIN'
+    });
 
 function LoginServiceProvider(){
     var loginServiceName = 'tutteli.auth.login.form.LoginService';
     
-    this.setLoginServiceName = function(name){
+    this.setLoginServiceName = function(name) {
         loginServiceName = name;
     };
     
-    this.getLoginServiceName = function(){
+    this.getLoginServiceName = function() {
         return loginServiceName;
     };
     
     this.$get = $get;
     $get.$inject = ['$injector'];
-    function $get($injector){
+    function $get($injector) {
         return $injector.get(loginServiceName);
     }
 }
@@ -91,7 +93,7 @@ function AuthService($rootScope, $q, LoginService, Session, USER_ROLES, AUTH_EVE
 function Session() {
     
     this.create = function (user) {
-        if (user.role == undefined){
+        if (user.role == undefined) {
             throw new Error('user object needs to provide a property role');
         }
         
