@@ -19,10 +19,11 @@ describe('HttpInterceptor', function(){
     $httpBackend = null,
     $http = null,
     AUTH_EVENTS = null;
+    var loginUrl = 'login.html';
     
     beforeEach(function(){
         module('tutteli.auth.http', function($provide){
-            $provide.value('tutteli.auth.loginUrl', 'login.html');
+            $provide.value('tutteli.auth.loginUrl', loginUrl);
         }); 
         inject(['$rootScope', '$httpBackend', '$http', 'tutteli.auth.EVENTS', 
             function(_$rootScope_,_$httpBackend_, _$http_, _AUTH_EVENTS_){
@@ -44,13 +45,14 @@ describe('HttpInterceptor', function(){
         $httpBackend.whenGET('dummy.tpl').respond(401, response);
         $http.get('dummy.tpl');
         $httpBackend.flush();
-        expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.notAuthenticated, response);
+        expect($rootScope.$broadcast).toHaveBeenCalledWith(
+                AUTH_EVENTS.notAuthenticated, {data: response, url: 'dummy.tpl'});
     });
     
     it('is 401 and login url - does not broadcast', function() {
         var response = {msg:'hello'};
-        $httpBackend.whenGET('login.html').respond(401, response);
-        $http.get('login.html');
+        $httpBackend.whenGET(loginUrl).respond(401, response);
+        $http.get(loginUrl);
         $httpBackend.flush();
         expect($rootScope.$broadcast).not.toHaveBeenCalled();
     });
@@ -60,15 +62,17 @@ describe('HttpInterceptor', function(){
         $httpBackend.whenGET('dummy.tpl').respond(403, response);
         $http.get('dummy.tpl');
         $httpBackend.flush();
-        expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.notAuthorised, response);
+        expect($rootScope.$broadcast).toHaveBeenCalledWith(
+                AUTH_EVENTS.notAuthorised, {data: response, url: 'dummy.tpl'});
     });
       
-    it('is 403 and is login url - broadcasts AUTH_EVENTS.notAuthorised', inject(function($http){
+    it('is 403 and is login url - broadcasts AUTH_EVENTS.notAuthorised', function(){
         var response = {msg:'hello'};
-        $httpBackend.whenGET('login.html').respond(403, response);
-        $http.get('login.html');
+        $httpBackend.whenGET(loginUrl).respond(403, response);
+        $http.get(loginUrl);
         $httpBackend.flush();
-        expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.notAuthorised, response);
-    }));
+        expect($rootScope.$broadcast).toHaveBeenCalledWith(
+                AUTH_EVENTS.notAuthorised, {data: response, url: loginUrl});
+    });
     
 });
