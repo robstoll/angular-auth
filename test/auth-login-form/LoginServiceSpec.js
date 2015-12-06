@@ -5,24 +5,26 @@
  */
 'use strict';
 
-describe('LoginService', function(){
+describe('LoginService', function() {
     var loginUrl = 'login.html';
+    var logoutUrl = 'logout.html';
     
-    beforeEach(module('tutteli.auth.login.form', function($provide){
+    beforeEach(module('tutteli.auth.login.form', function($provide) {
         $provide.value('tutteli.auth.loginUrl', 'login.html');
+        $provide.value('tutteli.auth.logoutUrl', 'logout.html');
     }));
     
     var LoginService = null;
     
-    beforeEach(inject(['tutteli.auth.login.form.LoginService', function(_LoginService_){
+    beforeEach(inject(['tutteli.auth.login.form.LoginService', function(_LoginService_) {
         LoginService = _LoginService_;
     }]));
     
-    describe('login:', function(){
+    describe('login:', function() {
         var $httpBackend = null,
             response = {bla: 'dummy'};
         
-        beforeEach(inject(function(_$httpBackend_){
+        beforeEach(inject(function(_$httpBackend_) {
             $httpBackend = _$httpBackend_;
         }));
         
@@ -31,7 +33,7 @@ describe('LoginService', function(){
             $httpBackend.verifyNoOutstandingRequest();
         });
     
-        describe('rejects when', function(){
+        describe('rejects when', function() {
             afterEach(function(){
                 $httpBackend.expectPOST(loginUrl);
                 var result = LoginService.login();
@@ -41,24 +43,24 @@ describe('LoginService', function(){
                 });
             });
             
-            it('404', function(){
+            it('404', function() {
                 $httpBackend.whenPOST(loginUrl).respond(404, response);
             });
             
-            it('403', function(){
+            it('403', function() {
                 $httpBackend.whenPOST(loginUrl).respond(403, response);
             });
             
-            it('401', function(){
+            it('401', function() {
                 $httpBackend.whenPOST(loginUrl).respond(403, response);
             });
             
-            it('500', function(){
+            it('500', function() {
                 $httpBackend.whenPOST(loginUrl).respond(500, response);
             });
         });
         
-        it('fullfils if 200', function(){
+        it('fullfils if 200', function() {
             $httpBackend.whenPOST(loginUrl).respond(200, response);
             $httpBackend.expectPOST(loginUrl);
             var result = LoginService.login();
@@ -68,11 +70,54 @@ describe('LoginService', function(){
             }, function(){fail('error occurred');});
         });
         
-        it('sends arbitrary credentials', function(){
+        it('sends arbitrary credentials', function() {
             var dummy = {a: 'b'};
             $httpBackend.expectPOST(loginUrl, dummy).respond(200, response);
             LoginService.login(dummy);
             $httpBackend.flush();
+        });
+    });
+    
+    describe('logout:', function() {
+        var $httpBackend = null,
+            response = {bla: 'dummy'};
+    
+        beforeEach(inject(function(_$httpBackend_) {
+            $httpBackend = _$httpBackend_;
+        }));
+        
+        afterEach(function() {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        });
+    
+        describe('rejects when', function() {
+            afterEach(function(){
+                $httpBackend.expectGET(logoutUrl);
+                var result = LoginService.logout();
+                $httpBackend.flush();
+                result.then(function(){fail('was successful');}, function(errorResponse){
+                    expect(errorResponse.data).toEqual(response);
+                });
+            });
+            
+            it('404', function() {
+                $httpBackend.whenGET(logoutUrl).respond(404, response);
+            });
+            
+            it('500', function() {
+                $httpBackend.whenGET(logoutUrl).respond(500, response);
+            });
+        });
+        
+        it('fullfils if 200', function() {
+            $httpBackend.whenGET(logoutUrl).respond(200, response);
+            $httpBackend.expectGET(logoutUrl);
+            var result = LoginService.logout();
+            $httpBackend.flush();
+            result.then(function(resp){
+                expect(resp.data).toEqual(response);
+            }, function(){fail('error occurred');});
         });
     });
 });

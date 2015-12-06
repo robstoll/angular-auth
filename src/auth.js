@@ -66,6 +66,13 @@ function AuthService($rootScope, $q, LoginService, Session, USER_ROLES, AUTH_EVE
             return $q.reject(errorResponse);
         });
     };
+    
+    this.logout = function() {
+        return LoginService.logout().then(function (result) {
+            $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess, Session);
+            Session.destroy();
+        });
+    };
         
     this.isAuthenticated = function () {
         return Session.user !== undefined;
@@ -76,7 +83,7 @@ function AuthService($rootScope, $q, LoginService, Session, USER_ROLES, AUTH_EVE
             || angular.isArray(authorisedRoles) && authorisedRoles.length == 0;
         
         //if authorised=false then it requires a logged in user
-        if (!authorised && Session.user !== undefined){
+        if (!authorised && Session.user !== undefined) {
             authorised = authorisedRoles == USER_ROLES.authenticated;
             //if authorised=false then a special role is required
             if (!authorised) {

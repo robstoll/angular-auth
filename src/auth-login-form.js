@@ -8,13 +8,18 @@
 
 angular.module('tutteli.auth.login.form', ['tutteli.auth.core'])
     .service('tutteli.auth.login.form.LoginService', LoginService)
-    .factory('tutteli.auth.loginUrl', LoginUrl);
+    .factory('tutteli.auth.loginUrl', LoginUrl)
+    .factory('tutteli.auth.logoutUrl', LogoutUrl);
 
-LoginService.$inject = ['$http', 'tutteli.auth.loginUrl'];
-function LoginService($http, loginUrl) {
+LoginService.$inject = ['$http', 'tutteli.auth.loginUrl', 'tutteli.auth.logoutUrl'];
+function LoginService($http, loginUrl, logoutUrl) {
     
     this.login = function(credentials) {
         return $http.post(loginUrl, credentials);
+    };
+    
+    this.logout = function() {
+        return $http.get(logoutUrl);
     };
     
     this.getLoginUrls = function() {
@@ -24,6 +29,10 @@ function LoginService($http, loginUrl) {
 
 function LoginUrl() {
     return angular.element(document.querySelector('base')).attr('href') + 'login';
+}
+
+function LogoutUrl() {
+    return angular.element(document.querySelector('base')).attr('href') + 'logout';
 }
 
 })();

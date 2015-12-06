@@ -6,27 +6,27 @@
 'use strict';
 
 
-describe('loginUrl', function(){
+describe('logoutUrl', function(){
     
-    it('is href from <base> and appends login', function() {
+    it('is href from <base> and appends logout', function() {
         angular.element(document.querySelector('head')).append('<base href="/test/"/>');      
         module('tutteli.auth.login.form');
         
-        inject(['tutteli.auth.loginUrl', function(loginUrl) {
-            expect(loginUrl).toBe('/test/login');
+        inject(['tutteli.auth.logoutUrl', function(logoutUrl) {
+            expect(logoutUrl).toBe('/test/logout');
         }]);
     });
     
-    it('is used by LoginService\'s login method', function() {
-        var loginUrl = 'login.html';
+    it('is used by LoginService\'s logout method', function() {
+        var logoutUrl = 'logoutUrl.html';
         module('tutteli.auth.login.form', function($provide) {
-            $provide.value('tutteli.auth.loginUrl', loginUrl);
+            $provide.value('tutteli.auth.logoutUrl', logoutUrl);
         });
         
         inject(['$httpBackend', 'tutteli.auth.login.form.LoginService', function($httpBackend, LoginService) {
-            $httpBackend.whenPOST(loginUrl).respond(404);
-            $httpBackend.expectPOST(loginUrl);
-            LoginService.login();
+            $httpBackend.whenGET(logoutUrl).respond(404);
+            $httpBackend.expectGET(logoutUrl);
+            LoginService.logout();
             $httpBackend.flush();
             $httpBackend.verifyNoOutstandingExpectation();
             $httpBackend.verifyNoOutstandingRequest();
