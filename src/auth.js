@@ -56,7 +56,7 @@ function AuthService($rootScope, $q, LoginService, Session, USER_ROLES, AUTH_EVE
     
    this.login = function (credentials) {
         return LoginService.login(credentials).then(function (result) {
-            if (result.data.user == undefined) {
+            if (result.data.user === undefined) {
                 return $q.reject({msg:'user was not defined in the returned data', data: result.data});
             }
             Session.create(result.data.user);
@@ -79,7 +79,7 @@ function AuthService($rootScope, $q, LoginService, Session, USER_ROLES, AUTH_EVE
     };
         
     this.isAuthorised = function (authorisedRoles) {
-        var authorised = authorisedRoles == undefined 
+        var authorised = authorisedRoles === undefined 
             || angular.isArray(authorisedRoles) && authorisedRoles.length == 0;
         
         //if authorised=false then it requires a logged in user
@@ -100,7 +100,7 @@ function AuthService($rootScope, $q, LoginService, Session, USER_ROLES, AUTH_EVE
 function Session() {
     
     this.create = function (user) {
-        if (user.role == undefined) {
+        if (user.role === undefined) {
             throw new Error('user object needs to provide a property role');
         }
         
