@@ -95,6 +95,10 @@ function AuthService($rootScope, $q, LoginService, Session, USER_ROLES, AUTH_EVE
         }
         return authorised; 
     };
+    
+    this.isCurrent = function(userId){
+        return Session.user !== undefined && Session.user.id == userId;
+    };
 }  
 
 function Session() {

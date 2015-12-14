@@ -108,20 +108,28 @@ Following an example:
         url: '/login',
         controller: 'tutteli.LoginCtrl',
         templateUrl: 'login.tpl',
-        data : {
-            authRoles : [] //anonymous access
+        data: {
+            authRoles: [] //anonymous access
         }
     }).state('home', {
         url: '/',
         templateUrl: 'dashboard.html',
-        data : {
-            authRoles : [USER_ROLES.authenticated]
+        data: {
+            authRoles: [USER_ROLES.authenticated]
+        }
+    }).state('edit_user', {
+        url: '/users/:userId/edit',
+        templateUrl: 'edit_user.html',
+        data: {
+            authRoles: [USER_ROLES.admin],
+            userIdParamName: 'userId'
         }
     });
   }
 ]);
 ```
 
+The above example also includes a state (`edit_user`) which either requires the role `admin` or a currently logged in user with the same user id as the one provided in the state's url. `userIdParamName` can be used for this purpose and must contain the name of the state parameter which contains the user id.
 
 
 ##Http Interceptor

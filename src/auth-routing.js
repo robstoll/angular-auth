@@ -14,8 +14,16 @@ stateChangeHandler.$inject = ['$rootScope', 'tutteli.auth.AuthService', 'tutteli
 function stateChangeHandler($rootScope, AuthService, AUTH_EVENTS) {
   
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
-        var roles = toState.data !== undefined ? toState.data.authRoles : undefined; 
-        if (!AuthService.isAuthorised(roles)) {
+        var roles = undefined;
+        var userId = undefined;
+        if (toState.data !== undefined) {
+            roles = toState.data.authRoles;
+            if (toState.data.userIdParamName !== undefined) {
+                userId =  toParams[toState.data.userIdParamName];    
+            }
+        }
+                
+        if (!(AuthService.isAuthorised(roles) || AuthService.isCurrent(userId))) {
             event.preventDefault();
             if (AuthService.isAuthenticated()) {
                 $rootScope.$broadcast(AUTH_EVENTS.notAuthorised, toState.url);
