@@ -124,12 +124,19 @@ Following an example:
             authRoles: [USER_ROLES.admin],
             userIdParamName: 'userId'
         }
+    }).state('change_password', {
+        url: '/users/:userId/edit/password',
+        templateUrl: 'password.html',
+        data: {
+            authRoles: [USER_ROLES.noOne],
+            userIdParamName: 'userId'
+        }
     });
   }
 ]);
 ```
 
-The above example also includes a state (`edit_user`) which either requires the role `admin` or a currently logged in user with the same user id as the one provided in the state's url. `userIdParamName` can be used for this purpose and must contain the name of the state parameter which contains the user id.
+The above example also includes a state (`edit_user`) which either requires the role `admin` or a currently logged in user with the same user id as the one provided in the state's url. `userIdParamName` can be used for this purpose and must contain the name of the state parameter which contains the user id. In case only the current user shall be able to access a certain page (hence not even admins), one can use the special role `noOne` in combination with `userIdParamName`.
 
 
 ##Http Interceptor

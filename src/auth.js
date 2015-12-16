@@ -28,6 +28,7 @@ angular.module('tutteli.auth.core', [])
         notAuthenticated: 'tutteli-auth-not-authenticated',
         notAuthorised: 'tutteli-auth-not-authorised'
     }).constant('tutteli.auth.USER_ROLES', {
+        noOne: 'noOne',
         authenticated: 'IS_AUTHENTICATED',
         editor: 'ROLE_EDITOR',
         admin: 'ROLE_ADMIN'
