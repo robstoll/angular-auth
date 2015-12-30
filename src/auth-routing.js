@@ -26,9 +26,9 @@ function stateChangeHandler($rootScope, AuthService, AUTH_EVENTS) {
         if (!(AuthService.isAuthorised(roles) || AuthService.isCurrent(userId))) {
             event.preventDefault();
             if (AuthService.isAuthenticated()) {
-                $rootScope.$broadcast(AUTH_EVENTS.notAuthorised, toState.url);
+                $rootScope.$broadcast(AUTH_EVENTS.notAuthorised, {toState: toState, toParams: toParams});
             } else {
-                $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+                $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated, {toState: toState, toParams: toParams});
             }
         }
     });

@@ -17,9 +17,9 @@ function HttpInterceptor($rootScope, $q, AUTH_EVENTS, LoginUrl) {
     
     this.responseError = function(response) {
         if (response.status == 403) {
-            $rootScope.$broadcast(AUTH_EVENTS.notAuthorised, {data: response.data, url: response.config.url});
+            $rootScope.$broadcast(AUTH_EVENTS.notAuthorised, {response: response});
         } else if(response.status == 401 && response.config.url != LoginUrl) {
-            $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated, {data: response.data, url: response.config.url});
+            $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated, {response: response});
         }
         return $q.reject(response);
     };
