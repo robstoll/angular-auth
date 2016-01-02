@@ -51,17 +51,23 @@ describe('RoutingInterceptor', function(){
         spyOn(AuthService, 'isAuthorised').and.returnValue(false);
         spyOn(AuthService, 'isAuthenticated').and.returnValue(false);
         spyOn($rootScope, '$broadcast').and.callThrough();
-        var result = $rootScope.$broadcast('$stateChangeStart', {data:{authRoles:'admin'}});
+        var data = {data:{authRoles:'admin'}};
+
+        var result = $rootScope.$broadcast('$stateChangeStart', data);
+        
         expect(result.defaultPrevented).toBe(true);
-        expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.notAuthenticated);
+        expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.notAuthenticated, {toState: data, toParams: undefined});
     });
     
     it('is not authorised and authenticated - defaultPrevented = true and notAuthorised broadcasted', function(){
         spyOn(AuthService, 'isAuthorised').and.returnValue(false);
         spyOn(AuthService, 'isAuthenticated').and.returnValue(true);
         spyOn($rootScope, '$broadcast').and.callThrough();
-        var result = $rootScope.$broadcast('$stateChangeStart', {data:{authRoles:'admin'}, url:'test.html'});
+        var data = {data:{authRoles:'admin'}, url:'test.html'};
+        
+        var result = $rootScope.$broadcast('$stateChangeStart', data);
+        
         expect(result.defaultPrevented).toBe(true);
-        expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.notAuthorised, 'test.html');
+        expect($rootScope.$broadcast).toHaveBeenCalledWith(AUTH_EVENTS.notAuthorised, {toState: data, toParams: undefined});
     });
 });

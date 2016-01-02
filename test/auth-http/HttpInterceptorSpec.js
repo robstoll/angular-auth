@@ -14,6 +14,14 @@ describe('HttpInterceptor', function(){
     });
 });
 
+function expectEventDataAndUrl($rootScope, event, data, url){
+    var args = $rootScope.$broadcast.calls.mostRecent().args;
+    expect(args[0]).toEqual(event);
+    var response = args[1].response; 
+    expect(response.data).toEqual(data);
+    expect(response.config.url).toEqual(url);
+}
+
 describe('HttpInterceptor', function(){
     var $rootScope = null,
     $httpBackend = null,
@@ -45,8 +53,7 @@ describe('HttpInterceptor', function(){
         $httpBackend.whenGET('dummy.tpl').respond(401, response);
         $http.get('dummy.tpl');
         $httpBackend.flush();
-        expect($rootScope.$broadcast).toHaveBeenCalledWith(
-                AUTH_EVENTS.notAuthenticated, {data: response, url: 'dummy.tpl'});
+        expectEventDataAndUrl($rootScope, AUTH_EVENTS.notAuthenticated, response, 'dummy.tpl');
     });
     
     it('is 401 and login url - does not broadcast', function() {
@@ -62,8 +69,7 @@ describe('HttpInterceptor', function(){
         $httpBackend.whenGET('dummy.tpl').respond(403, response);
         $http.get('dummy.tpl');
         $httpBackend.flush();
-        expect($rootScope.$broadcast).toHaveBeenCalledWith(
-                AUTH_EVENTS.notAuthorised, {data: response, url: 'dummy.tpl'});
+        expectEventDataAndUrl($rootScope, AUTH_EVENTS.notAuthorised, response, 'dummy.tpl');
     });
       
     it('is 403 and is login url - broadcasts AUTH_EVENTS.notAuthorised', function(){
@@ -71,8 +77,7 @@ describe('HttpInterceptor', function(){
         $httpBackend.whenGET(loginUrl).respond(403, response);
         $http.get(loginUrl);
         $httpBackend.flush();
-        expect($rootScope.$broadcast).toHaveBeenCalledWith(
-                AUTH_EVENTS.notAuthorised, {data: response, url: loginUrl});
+        expectEventDataAndUrl($rootScope, AUTH_EVENTS.notAuthorised, response, loginUrl);
     });
     
 });
